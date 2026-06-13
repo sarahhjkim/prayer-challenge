@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>방언기도 42일 도전</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #1A2340 0%, #0F1628 100%);
+      font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+      color: #F9F6EF;
+      padding: 24px 16px 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container { width: 100%; max-width: 480px; }
+    .header { text-align: center; margin-bottom: 24px; }
+    .crown { font-size: 36px; color: #C8A84B; margin-bottom: 4px; }
+    h1 { font-size: 26px; font-weight: 800; color: #F9F6EF; letter-spacing: -0.5px; }
+    .subtitle { font-size: 13px; color: #8899BB; letter-spacing: 1px; margin-top: 6px; }
+
+    .notice {
+      background: rgba(74,144,217,0.12);
+      border: 1px solid rgba(74,144,217,0.3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #AABBD0;
+      line-height: 1.6;
+      text-align: center;
+    }
+    .notice strong { color: #4A90D9; }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 20px 16px;
+      margin-bottom: 16px;
+    }
+    .stats-row { display: flex; justify-content: space-around; align-items: center; margin-bottom: 16px; }
+    .stat-box { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .stat-num { font-size: 28px; font-weight: 800; color: #C8A84B; line-height: 1; }
+    .stat-label { font-size: 11px; color: #8899BB; }
+    .stat-divider { width: 1px; height: 36px; background: rgba(255,255,255,0.1); }
+    .progress-bar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden; margin-bottom: 12px; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #4A90D9, #C8A84B); border-radius: 999px; transition: width 0.5s ease; }
+    .motivation { text-align: center; font-size: 14px; color: #AABBD0; }
+
+    .grid { display: flex; flex-direction: column; gap: 6px; }
+    .week-row { display: flex; gap: 6px; }
+    .day-btn {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      cursor: pointer;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: transform 0.15s, background 0.2s;
+      color: #AABBD0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .day-btn.done {
+      background: linear-gradient(135deg, #2C3E6B, #4A90D9);
+      border: 1px solid #4A90D9;
+    }
+    .day-btn.celebrate { transform: scale(1.2); }
+    .day-num { font-size: 11px; line-height: 1; }
+    .check-mark { font-size: 14px; font-weight: 700; color: #fff; line-height: 1; }
+
+    .section-title { font-size: 13px; font-weight: 700; color: #8899BB; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
+    .milestones { display: flex; justify-content: space-between; }
+    .milestone { display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.4; transition: opacity 0.3s; }
+    .milestone.reached { opacity: 1; }
+    .milestone-icon { font-size: 20px; }
+    .milestone-text { font-size: 11px; color: #C8A84B; font-weight: 700; }
+
+    .reset-btn {
+      display: block; margin: 0 auto 16px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #5566AA; border-radius: 8px;
+      padding: 8px 20px; font-size: 12px; cursor: pointer;
+    }
+    .footer { text-align: center; font-size: 12px; color: #3D4F70; }
+
+    /* 완주 축하 오버레이 */
+    .complete-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 100;
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 16px;
+      text-align: center; padding: 32px;
+    }
+    .complete-overlay.show { display: flex; }
+    .complete-overlay h2 { font-size: 28px; color: #C8A84B; }
+    .complete-overlay p { color: #AABBD0; font-size: 15px; line-height: 1.7; }
+    .complete-overlay button {
+      margin-top: 8px; padding: 12px 28px;
+      background: #C8A84B; color: #0F1628;
+      border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="crown">✝</div>
+    <h1>방언기도 42일 도전</h1>
+    <p class="subtitle">매일 15분 · 42일 완주</p>
+  </div>
+
+  <div class="notice">
+    <strong>📱 내 기기에만 저장돼요</strong><br>
+    같은 링크를 받아도 각자 기기에 독립적으로 기록됩니다.<br>
+    새로고침·재시작해도 기록이 유지돼요!
+  </div>
+
+  <div class="card">
+    <div class="stats-row">
+      <div class="stat-box">
+        <span class="stat-num" id="count-done">0</span>
+        <span class="stat-label">완료</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-box">
+        <span class="stat-num" id="count-left">42</span>
+        <span class="stat-label">남은 날</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-box">
+        <span class="stat-num" id="count-pct">0%</span>
+        <span class="stat-label">진행률</span>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <p class="motivation" id="motivation">오늘부터 시작해보세요!</p>
+  </div>
+
+  <div class="card">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="section-title">마일스톤</h3>
+    <div class="milestones" id="milestones"></div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">초기화</button>
+  <p class="footer">매일 15분, 하나님과의 깊은 교제 🙏</p>
+</div>
+
+<!-- 완주 축하 -->
+<div class="complete-overlay" id="complete-overlay">
+  <div style="font-size:64px">🏆</div>
+  <h2>42일 완주!</h2>
+  <p>매일 15분씩 42일을<br>하나님 앞에 신실하게 섰습니다.<br>할렐루야! 🎉</p>
+  <button onclick="document.getElementById('complete-overlay').classList.remove('show')">닫기</button>
+</div>
+
+<script>
+  const TOTAL = 42;
+  const KEY = 'prayer42_v2';
+
+  // localStorage에서 불러오기 (파일로 열 때도, 웹서버로 열 때도 동작)
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch { return {}; }
+  }
+
+  function save(data) {
+    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch {}
+  }
+
+  let checked = load();
+  let prevDone = Object.values(checked).filter(Boolean).length;
+
+  function getMotivation(n) {
+    const flames = n === 0 ? '' : n < 7 ? '🔥' : n < 21 ? '🔥🔥' : n < 35 ? '🔥🔥🔥' : '🔥🔥🔥🔥';
+    const msg =
+      n === 0 ? '오늘부터 시작해보세요!' :
+      n < 7  ? '좋은 출발이에요. 계속 나아가세요!' :
+      n === 7  ? '🎉 일주일 완주! 대단해요!' :
+      n < 14 ? '꾸준함이 능력이에요. 잘 하고 있어요!' :
+      n === 14 ? '🎉 2주 완주! 정말 멋져요!' :
+      n < 21 ? '벌써 절반이 가까워지고 있어요!' :
+      n === 21 ? '🎉 3주 완주! 습관이 되고 있어요!' :
+      n < 35 ? '믿음으로 계속 전진하고 있어요!' :
+      n === 35 ? '🎉 5주 완주! 거의 다 왔어요!' :
+      n < 42 ? '이제 마지막 고지가 보여요!' :
+               '🏆 42일 도전 완전 완주! 할렐루야!';
+    return flames + (flames ? ' ' : '') + msg;
+  }
+
+  function updateUI() {
+    const done = Object.values(checked).filter(Boolean).length;
+    const pct = Math.round(done / TOTAL * 100);
+    document.getElementById('count-done').textContent = done;
+    document.getElementById('count-left').textContent = TOTAL - done;
+    document.getElementById('count-pct').textContent = pct + '%';
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('motivation').textContent = getMotivation(done);
+    [7,14,21,35,42].forEach(m => {
+      const el = document.getElementById('ms-' + m);
+      if (!el) return;
+      el.classList.toggle('reached', done >= m);
+      el.querySelector('.milestone-icon').textContent = done >= m ? '🏅' : '○';
+    });
+    if (done === 42 && prevDone < 42) {
+      setTimeout(() => document.getElementById('complete-overlay').classList.add('show'), 400);
+    }
+    prevDone = done;
+  }
+
+  function toggleDay(day) {
+    checked[day] = !checked[day];
+    save(checked);
+    const btn = document.getElementById('day-' + day);
+    btn.classList.toggle('done', !!checked[day]);
+    btn.innerHTML = checked[day]
+      ? `<span class="day-num">${day}</span><span class="check-mark">✓</span>`
+      : `<span class="day-num">${day}</span>`;
+    if (checked[day]) {
+      btn.classList.add('celebrate');
+      setTimeout(() => btn.classList.remove('celebrate'), 700);
+    }
+    updateUI();
+  }
+
+  function buildGrid() {
+    const grid = document.getElementById('grid');
+    for (let w = 0; w < 6; w++) {
+      const row = document.createElement('div');
+      row.className = 'week-row';
+      for (let i = 1; i <= 7; i++) {
+        const day = w * 7 + i;
+        if (day > TOTAL) break;
+        const btn = document.createElement('button');
+        btn.className = 'day-btn' + (checked[day] ? ' done' : '');
+        btn.id = 'day-' + day;
+        btn.title = day + '일차';
+        btn.innerHTML = checked[day]
+          ? `<span class="day-num">${day}</span><span class="check-mark">✓</span>`
+          : `<span class="day-num">${day}</span>`;
+        btn.onclick = () => toggleDay(day);
+        row.appendChild(btn);
+      }
+      grid.appendChild(row);
+    }
+  }
+
+  function buildMilestones() {
+    const done = Object.values(checked).filter(Boolean).length;
+    const container = document.getElementById('milestones');
+    [7,14,21,35,42].forEach(m => {
+      const el = document.createElement('div');
+      el.className = 'milestone' + (done >= m ? ' reached' : '');
+      el.id = 'ms-' + m;
+      el.innerHTML = `<span class="milestone-icon">${done >= m ? '🏅' : '○'}</span><span class="milestone-text">${m}일</span>`;
+      container.appendChild(el);
+    });
+  }
+
+  function resetAll() {
+    if (confirm('모든 기록을 초기화할까요?')) {
+      checked = {};
+      save(checked);
+      document.querySelectorAll('.day-btn').forEach(btn => {
+        const day = parseInt(btn.id.replace('day-', ''));
+        btn.className = 'day-btn';
+        btn.innerHTML = `<span class="day-num">${day}</span>`;
+      });
+      document.querySelectorAll('.milestone').forEach(el => {
+        el.classList.remove('reached');
+        el.querySelector('.milestone-icon').textContent = '○';
+      });
+      updateUI();
+    }
+  }
+
+  buildGrid();
+  buildMilestones();
+  updateUI();
+</script>
+</body>
+</html>
